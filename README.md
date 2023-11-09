@@ -6,10 +6,9 @@ Supports the following function:
 
 * `Get`
 * `Add`
-* `List`
-* `UpdateOne`
 * `Delete`
 * `DeleteMany`
+* `List`
 * `UpdateOne`
 * `UpdateMany`
 
