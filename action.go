@@ -50,13 +50,13 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 	return cur.All(context.Background(), results)
 }
 
-func UpdateOne(db, col string, filter bson.D, update interface{}) error {
+func UpdateOne(db, col string, filter, update bson.D) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	return err
 }
 
-func UpdateMany(db, col string, filter bson.D, update interface{}) error {
+func UpdateMany(db, col string, filter, update bson.D) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateMany(context.Background(), filter, update)
 	return err
