@@ -3,7 +3,8 @@ package gomongo
 import (
 	"errors"
 	"fmt"
-	"github.com/yottab-io/go_env"
+
+	env "github.com/yottab-io/go_env"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -11,7 +12,7 @@ import (
 var (
 	client      *mongo.Client
 	dbUser      = env.Get("Yb_MONGODB_USER", "root")
-	dbPass      = env.Get("Yb_MONGODB_PASS")
+	dbPass      = env.Get("Yb_MONGODB_PASS", "")
 	dbPort      = env.GetInt64("Yb_MONGODB_PORT", 27017)
 	dbDomain    = env.Get("Yb_MONGODB_DOMAIN", "0.0.0.0")
 	dbAddress   = ""
