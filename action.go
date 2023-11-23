@@ -35,7 +35,7 @@ func Delete(db, col string, filter bson.D, opts ...*options.DeleteOptions) error
 func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
-	_, err := collection.DeleteMany(ctx, filter, opts)
+	_, err := collection.DeleteMany(ctx, filter, opts...)
 	return err
 }
 
