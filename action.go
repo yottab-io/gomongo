@@ -8,32 +8,34 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Get(db, col string, filter bson.D, result interface{}) error {
+func Get(db, col string, filter bson.D, result interface{}, opts ...*options.FindOneOptions) error {
 	collection := client.Database(db).Collection(col)
-	return collection.FindOne(context.Background(), filter).Decode(result)
+	return collection.FindOne(
+		context.Background(), filter, opts...).Decode(result)
 }
 
-func Add(db, col string, obj interface{}) (id primitive.ObjectID, err error) {
+func Add(db, col string, obj interface{}, opts ...*options.InsertOneOptions) (id primitive.ObjectID, err error) {
 	bObj, err := StructToDoc(obj)
 	if err != nil {
 		return
 	}
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
-	InsertOneResult, err := collection.InsertOne(ctx, bObj)
+	InsertOneResult, err := collection.InsertOne(ctx, bObj, opts...)
 	return InsertOneResult.InsertedID.(primitive.ObjectID), err
 }
 
-func Delete(db, col string, filter bson.D) error {
+func Delete(db, col string, filter bson.D, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
-	_, err := collection.DeleteOne(ctx, filter)
+	_, err := collection.DeleteOne(ctx, filter, opts...)
 	return err
 }
-func DeleteMany(db, col string, filter bson.D) error {
+
+func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
-	_, err := collection.DeleteMany(ctx, filter)
+	_, err := collection.DeleteMany(ctx, filter, opts)
 	return err
 }
 
@@ -50,15 +52,15 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 	return cur.All(context.Background(), results)
 }
 
-func UpdateOne(db, col string, filter, update bson.D) error {
+func UpdateOne(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
-	_, err := collection.UpdateOne(context.Background(), filter, update)
+	_, err := collection.UpdateOne(context.Background(), filter, update, opts...)
 	return err
 }
 
-func UpdateMany(db, col string, filter, update bson.D) error {
+func UpdateMany(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
-	_, err := collection.UpdateMany(context.Background(), filter, update)
+	_, err := collection.UpdateMany(context.Background(), filter, update, opts...)
 	return err
 }
 
