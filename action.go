@@ -44,7 +44,11 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 	if page < 1 {
 		page = 1
 	}
-	
+
+	if 100 < limit || limit < 1 {
+		limit = 100
+	}
+
 	skip := page*limit - limit
 	opt := options.Find().SetLimit(limit).SetSkip(skip)
 	collection := client.Database(db).Collection(col)
