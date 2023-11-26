@@ -41,10 +41,14 @@ func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) e
 
 // type of results must be array of struct
 func List(db, col string, filter bson.D, results interface{}, page, limit int64) error {
+	if page < 1 {
+		page = 1
+	}
+	
 	skip := page*limit - limit
-	opt := options.FindOptions{Limit: &limit, Skip: &skip}
+	opt := options.Find().SetLimit(limit).SetSkip(skip)
 	collection := client.Database(db).Collection(col)
-	cur, err := collection.Find(context.Background(), filter, &opt)
+	cur, err := collection.Find(context.Background(), filter, opt)
 	if err != nil {
 		return err
 	}
