@@ -40,7 +40,7 @@ func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) e
 }
 
 // type of results must be array of struct
-func List(db, col string, filter bson.D, results interface{}, page, limit int64) error {
+func List(db, col string, filter bson.D, results interface{}, page, limit int64, opts ...*options.FindOptions) error {
 	if page < 1 {
 		page = 1
 	}
@@ -50,9 +50,10 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 	}
 
 	skip := page*limit - limit
-	opt := options.Find().SetLimit(limit).SetSkip(skip)
+	opts = append(opts,
+		options.Find().SetLimit(limit).SetSkip(skip))
 	collection := client.Database(db).Collection(col)
-	cur, err := collection.Find(context.Background(), filter, opt)
+	cur, err := collection.Find(context.Background(), filter, opts...)
 	if err != nil {
 		return err
 	}
@@ -62,7 +63,6 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 
 func UpdateOne(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
-	options.FindOneAndUpdateOptions
 	_, err := collection.UpdateOne(context.Background(), filter, update, opts...)
 	return err
 }
