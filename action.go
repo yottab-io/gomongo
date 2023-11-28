@@ -62,6 +62,7 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64)
 
 func UpdateOne(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
+	options.FindOneAndUpdateOptions
 	_, err := collection.UpdateOne(context.Background(), filter, update, opts...)
 	return err
 }
