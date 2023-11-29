@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Get(db, col string, filter bson.D, result interface{}, opts ...*options.FindOneOptions) error {
+func Get(db, col string, filter interface{}, result interface{}, opts ...*options.FindOneOptions) error {
 	collection := client.Database(db).Collection(col)
 	return collection.FindOne(
 		context.Background(), filter, opts...).Decode(result)
@@ -25,14 +25,14 @@ func Add(db, col string, obj interface{}, opts ...*options.InsertOneOptions) (id
 	return InsertOneResult.InsertedID.(primitive.ObjectID), err
 }
 
-func Delete(db, col string, filter bson.D, opts ...*options.DeleteOptions) error {
+func Delete(db, col string, filter interface{}, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
 	_, err := collection.DeleteOne(ctx, filter, opts...)
 	return err
 }
 
-func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) error {
+func DeleteMany(db, col string, filter interface{}, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
 	_, err := collection.DeleteMany(ctx, filter, opts...)
@@ -40,7 +40,7 @@ func DeleteMany(db, col string, filter bson.D, opts ...*options.DeleteOptions) e
 }
 
 // type of results must be array of struct
-func List(db, col string, filter bson.D, results interface{}, page, limit int64, opts ...*options.FindOptions) error {
+func List(db, col string, filter interface{}, results interface{}, page, limit int64, opts ...*options.FindOptions) error {
 	if page < 1 {
 		page = 1
 	}
@@ -61,19 +61,29 @@ func List(db, col string, filter bson.D, results interface{}, page, limit int64,
 	return cur.All(context.Background(), results)
 }
 
-func UpdateOne(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
+func UpdateOne(db, col string, filter, update interface{}, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateOne(context.Background(), filter, update, opts...)
 	return err
 }
 
-func UpdateMany(db, col string, filter, update bson.D, opts ...*options.UpdateOptions) error {
+func UpdateMany(db, col string, filter, update interface{}, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateMany(context.Background(), filter, update, opts...)
 	return err
 }
 
 func StructToDoc(v interface{}) (doc *bson.D, err error) {
+	data, err := bson.Marshal(v)
+	if err != nil {
+		return
+	}
+
+	err = bson.Unmarshal(data, &doc)
+	return
+}
+
+func StructToUnorderedDoc(v interface{}) (doc *bson.M, err error) {
 	data, err := bson.Marshal(v)
 	if err != nil {
 		return
