@@ -40,7 +40,7 @@ func DeleteMany(db, col string, filter interface{}, opts ...*options.DeleteOptio
 }
 
 // type of results must be array of struct
-func List(db, col string, filter interface{}, results interface{}, page, limit int64, opts ...*options.FindOptions) error {
+func List(db, col string, filter interface{}, pointerToSliceResults interface{}, page, limit int64, opts ...*options.FindOptions) error {
 	if page < 1 {
 		page = 1
 	}
@@ -58,7 +58,17 @@ func List(db, col string, filter interface{}, results interface{}, page, limit i
 		return err
 	}
 	defer cur.Close(context.Background())
-	return cur.All(context.Background(), results)
+	return cur.All(context.Background(), pointerToSliceResults)
+}
+
+func Aggregate(db, col string, filter interface{}, pointerToSliceResults interface{}, opts ...*options.AggregateOptions) error {
+	collection := client.Database(db).Collection(col)
+	cursor, err := collection.Aggregate(context.Background(), filter, opts...)
+	if err != nil {
+		return err
+	}
+
+	return cursor.All(context.Background(), pointerToSliceResults)
 }
 
 func UpdateOne(db, col string, filter, update interface{}, opts ...*options.UpdateOptions) error {
