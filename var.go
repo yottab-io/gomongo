@@ -18,7 +18,7 @@ var (
 	dbAddress      = ""
 	ErrBadReq      = errors.New("MongoDB Bad request")
 	ClearFilter    = bson.D{}
-	ErrNoDocuments = e
+	ErrNoDocuments = mongo.ErrNoDocuments
 )
 
 func init() {
