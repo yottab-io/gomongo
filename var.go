@@ -10,14 +10,15 @@ import (
 )
 
 var (
-	client      *mongo.Client
-	dbUser      = env.Get("Yb_MONGODB_USER", "root")
-	dbPass      = env.Get("Yb_MONGODB_PASS", "")
-	dbPort      = env.GetInt64("Yb_MONGODB_PORT", 27017)
-	dbDomain    = env.Get("Yb_MONGODB_DOMAIN", "0.0.0.0")
-	dbAddress   = ""
-	ErrBadReq   = errors.New("MongoDB Bad request")
-	ClearFilter = bson.D{}
+	client         *mongo.Client
+	dbUser         = env.Get("Yb_MONGODB_USER", "root")
+	dbPass         = env.Get("Yb_MONGODB_PASS", "")
+	dbPort         = env.GetInt64("Yb_MONGODB_PORT", 27017)
+	dbDomain       = env.Get("Yb_MONGODB_DOMAIN", "0.0.0.0")
+	dbAddress      = ""
+	ErrBadReq      = errors.New("MongoDB Bad request")
+	ClearFilter    = bson.D{}
+	ErrNoDocuments = e
 )
 
 func init() {
