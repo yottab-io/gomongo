@@ -40,7 +40,10 @@ func DeleteMany(db, col string, filter interface{}, opts ...*options.DeleteOptio
 }
 
 // type of results must be array of struct
-func List(db, col string, filter interface{}, pointerToSliceResults interface{}, page, limit int64, opts ...*options.FindOptions) error {
+func List(db, col string, filter interface{}, pointerToSliceResults interface{}, pageNum, limitNum int, opts ...*options.FindOptions) error {
+	page := int64(pageNum)
+	limit := int64(limitNum)
+
 	if page < 1 {
 		page = 1
 	}
