@@ -8,13 +8,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Get(db, col string, filter interface{}, result interface{}, opts ...*options.FindOneOptions) error {
+func Get(db, col string, filter any, result any, opts ...*options.FindOneOptions) error {
 	collection := client.Database(db).Collection(col)
 	return collection.FindOne(
 		context.Background(), filter, opts...).Decode(result)
 }
 
-func Add(db, col string, obj interface{}, opts ...*options.InsertOneOptions) (id primitive.ObjectID, err error) {
+func Add(db, col string, obj any, opts ...*options.InsertOneOptions) (id primitive.ObjectID, err error) {
 	bObj, err := StructToDoc(obj)
 	if err != nil {
 		return
@@ -25,14 +25,14 @@ func Add(db, col string, obj interface{}, opts ...*options.InsertOneOptions) (id
 	return InsertOneResult.InsertedID.(primitive.ObjectID), err
 }
 
-func Delete(db, col string, filter interface{}, opts ...*options.DeleteOptions) error {
+func Delete(db, col string, filter any, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
 	_, err := collection.DeleteOne(ctx, filter, opts...)
 	return err
 }
 
-func DeleteMany(db, col string, filter interface{}, opts ...*options.DeleteOptions) error {
+func DeleteMany(db, col string, filter any, opts ...*options.DeleteOptions) error {
 	collection := client.Database(db).Collection(col)
 	ctx := context.Background()
 	_, err := collection.DeleteMany(ctx, filter, opts...)
@@ -40,7 +40,7 @@ func DeleteMany(db, col string, filter interface{}, opts ...*options.DeleteOptio
 }
 
 // type of results must be array of struct
-func List(db, col string, filter interface{}, pointerToSliceResults interface{}, pageNum, limitNum int, opts ...*options.FindOptions) error {
+func List(db, col string, filter any, pointerToSliceResults any, pageNum, limitNum int, opts ...*options.FindOptions) error {
 	page := int64(pageNum)
 	limit := int64(limitNum)
 
@@ -64,7 +64,7 @@ func List(db, col string, filter interface{}, pointerToSliceResults interface{},
 	return cur.All(context.Background(), pointerToSliceResults)
 }
 
-func Aggregate(db, col string, filter interface{}, pointerToSliceResults interface{}, opts ...*options.AggregateOptions) error {
+func Aggregate(db, col string, filter any, pointerToSliceResults any, opts ...*options.AggregateOptions) error {
 	collection := client.Database(db).Collection(col)
 	cursor, err := collection.Aggregate(context.Background(), filter, opts...)
 	if err != nil {
@@ -74,19 +74,19 @@ func Aggregate(db, col string, filter interface{}, pointerToSliceResults interfa
 	return cursor.All(context.Background(), pointerToSliceResults)
 }
 
-func UpdateOne(db, col string, filter, update interface{}, opts ...*options.UpdateOptions) error {
+func UpdateOne(db, col string, filter, update any, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateOne(context.Background(), filter, update, opts...)
 	return err
 }
 
-func UpdateMany(db, col string, filter, update interface{}, opts ...*options.UpdateOptions) error {
+func UpdateMany(db, col string, filter, update any, opts ...*options.UpdateOptions) error {
 	collection := client.Database(db).Collection(col)
 	_, err := collection.UpdateMany(context.Background(), filter, update, opts...)
 	return err
 }
 
-func StructToDoc(v interface{}) (doc *bson.D, err error) {
+func StructToDoc(v any) (doc *bson.D, err error) {
 	data, err := bson.Marshal(v)
 	if err != nil {
 		return
@@ -96,7 +96,7 @@ func StructToDoc(v interface{}) (doc *bson.D, err error) {
 	return
 }
 
-func StructToUnorderedDoc(v interface{}) (doc *bson.M, err error) {
+func StructToUnorderedDoc(v any) (doc *bson.M, err error) {
 	data, err := bson.Marshal(v)
 	if err != nil {
 		return
